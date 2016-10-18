@@ -1,4 +1,8 @@
 %--------------------------------------------------------
+% Full image is cropped down to the scene of 20*20 pixels.
+% Full data available at 
+% http://hyperspectral.ee.uh.edu/?page_id=459.
+% 
 % Yangqing Li 
 % 31 Oct 2015
 % --------------------------------------------------------
@@ -22,7 +26,8 @@ y = cell(1,T);
 if isequal(fname,'agr')
     Hdata=load('HyperData.mat');
     
-    Hdata=Hdata.Hyper(1:40, 1:40, :);
+    %the pixel coordinates of the cropped region is (1:20, 1:20)
+    Hdata=Hdata.Hyper(1:20, 1:20, :);
 
     [Tr, Tl, n] = size(Hdata);
 
@@ -37,10 +42,10 @@ end
 %% load urban data
 if isequal(fname,'urban')
     Hdata=load('uh_data.mat');
-    Hdata=Hdata.uh_data;
-
-    Hdata = Hdata(100:139, 300:339, :);
-
+    
+    %the pixel coordinates of the cropped region is (1:20, 1:20)
+    Hdata=Hdata.uh_data(1:20, 1:20, :);
+    
     [Tr, Tl, n] = size(Hdata);
 
     l=(Ns-1)*T+1;
@@ -62,7 +67,7 @@ for t = 1:T
     if isequal(Atype,'Gaussian')
         Phi{t} = randn(M,N); % Gaussian matrix
     else
-        Phi{t} = 2*randi([0 1],M,N)-1; % Bernoulli (random ¡À1) matrix
+        Phi{t} = 2*randi([0 1],M,N)-1; % Bernoulli (random Â±1) matrix
     end
     for n=1:N, Phi{t}(:,n) = Phi{t}(:,n)/norm(Phi{t}(:,n)); end;
     % Compute empirical overall signal power
@@ -78,4 +83,3 @@ for t = 1:T
     y{t} = Phi{t}*f_true{t} + w{t};
     A{t} = Phi{t}*dctmtx(N);        % A = Phi * Psi
 end
-
